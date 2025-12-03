@@ -1,37 +1,32 @@
-from confluent_kafka import Consumer
 import json
+import time
+import logging
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.dates import DateFormatter, date2num
-from datetime import datetime
-import matplotlib.ticker as mticker
-import time
+from matplotlib.dates import date2num, DateFormatter
+from confluent_kafka import Consumer
+import config
 
-# ---------------- CONFIG ----------------
-KAFKA_BOOTSTRAP = "localhost:9092"
-CANDLES_TOPIC = "candles_1m"
-GROUP_ID = "candle_visualization_group"
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 consumer = Consumer({
-    "bootstrap.servers": KAFKA_BOOTSTRAP,
-    "group.id": GROUP_ID,
-    "auto.offset.reset": "earliest",
-    # "enable.auto.commit": True
+    "bootstrap.servers": config.KAFKA_BOOTSTRAP,
+    "group.id": config.VISUALIZER_GROUP_ID,
+    "auto.offset.reset": "earliest"
 })
-consumer.subscribe([CANDLES_TOPIC])
+consumer.subscribe([config.CANDLES_TOPIC])
 
-# Keep last N candles
-candles_df = pd.DataFrame(columns=["ts","open","high","low","close","volume"])
+candles_df = pd.DataFrame(columns=["ts", "open", "high", "low", "close", "volume"])
 
-# Setup Matplotlib interactive mode
 plt.ion()
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(12, 6))
 
 def plot_candles(df):
     ax.clear()
     df_plot = df.copy()
     df_plot["ts_num"] = df_plot["ts"].apply(date2num)
-    for i, row in df_plot.iterrows():
+    for _, row in df_plot.iterrows():
         color = "green" if row["close"] >= row["open"] else "red"
         ax.plot([row["ts_num"], row["ts_num"]], [row["low"], row["high"]], color=color)
         ax.plot([row["ts_num"], row["ts_num"]], [row["open"], row["close"]], color=color, linewidth=5)
@@ -43,18 +38,15 @@ def plot_candles(df):
     plt.draw()
     plt.pause(0.1)
 
-print("Starting live candle plot...")
-
+log.info("Starting candle visualizer...")
 while True:
     msg = consumer.poll(1.0)
     if msg is None:
         time.sleep(0.1)
         continue
-
     if msg.error():
-        print("Consumer error:", msg.error())
+        log.error(f"Consumer error: {msg.error()}")
         continue
-
     try:
         data = json.loads(msg.value().decode("utf-8"))
         ts = pd.to_datetime(data["ts"])
@@ -67,7 +59,7 @@ while True:
             "volume": data["volume"]
         }
         candles_df = pd.concat([candles_df, pd.DataFrame([new_row])], ignore_index=True)
-        candles_df = candles_df.tail(50)  # last 50 candles
+        candles_df = candles_df.tail(config.MAX_CANDLES_TO_KEEP)
         plot_candles(candles_df)
     except Exception as e:
-        print("Error:", e)
+        log.error(f"Error processing candle: {e}")

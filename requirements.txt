@@ -1,0 +1,7 @@
+websocket-client
+confluent-kafka
+psycopg2-binary
+pandas
+matplotlib
+python-dotenv
+
