@@ -45,52 +45,54 @@ BINANCE/
 
 ---
 
-## ⚙️ **Installation**
+## ⚙️ Installation & Setup
 
-### **1. Clone the repository**
-git clone git@github.com:mohammadbnz74/BINANCE.git
+### Prerequisites
+- Python 3.9 or higher
+- Docker & Docker Compose (for Kafka)
+- Git
+
+### 1️⃣ Clone the repository
+```bash
+git clone git@github.com:Mohamadbnz/BINANCE.git
 cd BINANCE
+```
 
-### **2. Install dependencies**
+### 2️⃣ Install Python dependencies
+```bash
+# Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate
 
+# Install dependencies
 pip install -r requirements.txt
+```
 
-### **3. Configure the project**
-
-All settings are in config.py:
-
-KAFKA_BOOTSTRAP = "localhost:9092"
-
-TOPIC_CANDLES = "candles_1m"
-
-GROUP_ID = "binance_consumer_01"
-
-BINANCE_SYMBOL = "BTCUSDT"
-
-INTERVAL = "1m"
-
+### 3️⃣ Start Kafka with Docker
+```bash
+docker compose up -d
+```
 ---
 
-## 🚀 **Usage**
-### **Start Kafka**
+## 🚀 Running the Pipeline
 
-    docker compose up -d
+### Start all components in separate terminals:
 
-### **Run the producer**
+**Terminal 1: Producer**
+```bash
+python producer.py
+```
 
-    python producer.py
+**Terminal 2: Consumer**
+```bash
+python consumer.py
+```
 
-Fetches live candles from Binance and publishes them to Kafka.
-### **Run the consumer**
-
-    python consumer.py
-
-Consumes candle messages and processes them.
-### **Run the visualizer**
-
-    python visualizer.py
-
-Displays live-updating candle charts.
+**Terminal 3: Visualizer**
+```bash
+python visualizer.py
+```
+Opens live candlestick chart in matplotlib window.
 
 ---
 
@@ -134,3 +136,9 @@ Displays live-updating candle charts.
 
     Visualizer is decoupled and customizable
 
+
+## 📊 Sample Output
+
+### Live Candlestick Visualization
+![Candlestick Chart](docs/Figure_1.png)
+*Real-time BTCUSDT 1-minute candles with volume bars*
