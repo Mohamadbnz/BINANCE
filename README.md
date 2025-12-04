@@ -1,9 +1,23 @@
-# **BINANCE – Real-Time Market Data Pipeline**
+# 🚀 Real-Time Cryptocurrency Market Data Pipeline
 
-A lightweight real-time market-data system that consumes Binance candle streams, processes them, and exposes the data for visualization or downstream analytics.
+A **pipeline** that ingests live cryptocurrency market data from Binance WebSocket, processes it through Apache Kafka, and enables real-time analytics and visualization.
 
-Built for reliability, scalability, and clean separation of configuration and logic.
+**Built to demonstrate:** Stream processing • Event-driven architecture • Scalable data engineering • Real-time analytics
 
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+![Kafka](https://img.shields.io/badge/Kafka-3.0+-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+[Live Demo Video](link-if-you-have-one) | [Architecture Diagram](https://github.com/Mohamadbnz/BINANCE/edit/main/README.md#%EF%B8%8F-architecturehttps://github.com/Mohamadbnz/BINANCE/edit/main/README.md#%EF%B8%8F-architecture)
+
+---
+
+## 🎯 Key Features
+
+- ⚡ **Real-time streaming** with sub-second latency
+- 🔄 **Event-driven architecture** using Apache Kafka
+- 📊 **Live visualization** with candlestick charts
+- 📈 **Scalable design** supporting multiple symbols/intervals
 ---
 
 ## 📁 **Project Structure**
@@ -80,15 +94,43 @@ Displays live-updating candle charts.
 
 ---
 
-## 📊 **Architecture Overview**
+## 🏗️ Architecture
+```
+┌─────────────────────┐
+│   Binance WebSocket │  (Live market data)
+│   API (BTCUSDT 1m)  │
+└──────────┬──────────┘
+           │ candle updates
+           ▼
+    ┌──────────────┐
+    │  Producer    │  (producer.py)
+    │  • Connects  │
+    │  • Validates │
+    │  • Publishes │
+    └──────┬───────┘
+           │
+           ▼
+    ┌──────────────────────┐
+    │   Apache Kafka       │
+    │   Topic: candles_1m  │  (Message queue)
+    │   • Persistence      │
+    │   • Replay capability│
+    └──────┬───────────────┘
+           │
+           ├─────────────────┐
+           ▼                 ▼
+    ┌──────────┐    ┌──────────────┐
+    │Consumer  │    │ Visualizer   │
+    │(Group 1) │    │ • Real-time  │
+    │Storage │      │ • Candlestick│
+    └──────────┘    └──────────────┘
+```
 
-Binance API → producer.py → Kafka Topic → consumer.py → visualizer.py
-
-    Producer handles API limits, retries, and message formatting
-
-    Kafka provides durability, replay, and horizontal scaling
-
-    Consumer is stateless and scalable via group.id
+**Design Principles:**
+- **Decoupling**: Components communicate via Kafka, can be deployed independently
+- **Scalability**: Add more consumers without affecting producer
+- **Fault Tolerance**: Kafka persists messages if consumer fails
+- **Replayability**: Can reprocess historical data from any point
 
     Visualizer is decoupled and customizable
 
