@@ -17,7 +17,7 @@ MAX_CANDLES_TO_KEEP = 50  # for visualizer
 # -----------------------------
 # Postgres Config
 # -----------------------------
-PG_DSN = "dbname=binance user=amoo password=boos host=localhost port=5432"
+PG_DSN = "dbname=postgres user=postgres password=postgres host=localhost port=5432"
 
 # -----------------------------
 # API Config (for WebSocket)

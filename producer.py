@@ -14,7 +14,6 @@ def on_message(ws, message):
         msg = json.loads(message)
         if msg.get("type") != "trade":
             return
-
         producer.produce(
             topic=config.RAW_TOPIC,
             key=msg["data"][0]["s"],

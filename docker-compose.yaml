@@ -1,5 +1,4 @@
-version: "3.9"
-
+version: "3.8"
 services:
   kafka:
     image: apache/kafka:latest
@@ -13,12 +12,13 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:29092
-
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     networks:
       - kafkanet
 
   postgres:
-    image: postgres:15
+    image: postgres:17
     container_name: postgres
     environment:
       POSTGRES_DB: postgres
@@ -32,4 +32,3 @@ services:
 networks:
   kafkanet:
     driver: bridge
-
