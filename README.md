@@ -8,7 +8,7 @@ A **pipeline** that ingests live cryptocurrency market data from Binance WebSock
 ![Kafka](https://img.shields.io/badge/Kafka-3.0+-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-[Live Demo Video](link-if-you-have-one) | [Architecture Diagram](https://github.com/Mohamadbnz/BINANCE/edit/main/README.md#%EF%B8%8F-architecture)
+[Live Demo Video](link-if-you-have-one) | [Architecture Diagram](https://github.com/Mohamadbnz/BINANCE/blob/main/README.md#%EF%B8%8F-architecture)
 
 ---
 
